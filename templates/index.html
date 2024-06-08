@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Bar</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .search-bar {
+            background-color: grey;
+            padding: 10px;
+        }
+        .search-bar .msn {
+            color: white;
+            font-size: 20px;
+        }
+        .search-bar .search-input {
+            width: 100%;
+        }
+        .search-bar .search-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .search-bar .search-button {
+            margin-left: 10px;
+            background-color: transparent;
+            border: none;
+        }
+        .search-bar .arama-button {
+            margin-left: 10px;
+        }
+        .btn-like {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        .btn-dislike {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            border-radius: 50%;
+            background-color: #dc3545;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="search-bar d-flex justify-content-between align-items-center">
+    <div class="msn">MSN</div>
+    <div class="position-relative" style="flex: 1; max-width: 600px; margin: 0 20px;">
+        <form id="searchForm" class="d-flex" method="get" action="{% url 'search_news' %}">
+            <input type="text" class="form-control search-input" placeholder="Lütfen arama için kelime giriniz" name="q" id="searchInput">
+            <button type="button" class="search-button" onclick="document.getElementById('searchForm').submit();"><i class="fas fa-search"></i></button>
+            <button type="button" class="btn btn-primary arama-button" onclick="document.getElementById('searchForm').submit();">Arama</button>
+        </form>
+    </div>
+    <div>
+        <a href="{% url 'login' %}" class="text-white">Giriş Yap</a> | <a href="{% url 'register' %}" class="text-white">Kayıt Ol</a>
+    </div>
+</div>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/">Tüm Haberler</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="#"></a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="haberlerDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Haberler
+                </a>
+                <div class="dropdown-menu" aria-labelledby="haberlerDropdown">
+                    <a class="dropdown-item" href="#" onclick="filterNews('Spor', 'Spor Haberleri')">Spor</a>
+                    <a class="dropdown-item" href="#" onclick="filterNews('Ekonomi', 'Ekonomi Haberleri')">Ekonomi</a>
+                    <a class="dropdown-item" href="#" onclick="filterNews('Alışveriş', 'Alışveriş Haberleri')">Alışveriş</a>
+                    <a class="dropdown-item" href="#" onclick="filterNews('Astroloji', 'Astroloji Haberleri')">Astroloji</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h1 id="newsHeading">Tüm Haberler</h1>
+    <div class="list-group" id="newsList">
+        {% for news_item in all_news %}
+            <div class="list-group-item">
+                <div class="row">
+                    <div class="col-md-4">
+                        <img src="{{ news_item.photoURL }}" class="img-fluid" alt="News Image">
+                    </div>
+                    <div class="col-md-8">
+                        <h5 class="mb-1">{{ news_item.header }}</h5>
+                        <p class="mb-1">{{ news_item.text }}</p>
+                        <small>Kategori: {{ news_item.category }}</small><br>
+                        <small>Likes: <span id="likes-{{ news_item.id }}">{{ news_item.likes }}</span></small>
+                        <button class="btn btn-success btn-sm ml-2" onclick="incrementLikes({{ news_item.id }})">+</button>
+                        <button class="btn btn-danger btn-sm ml-2" onclick="decrementLikes({{ news_item.id }})">-</button>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    function filterNews(category, displayName) {
+        fetch(`/filter_news/${category}/`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('newsList').innerHTML = data.html;
+                document.getElementById('newsHeading').innerText = displayName;
+            });
+    }
+
+    function incrementLikes(id) {
+        const likesElement = document.getElementById(`likes-${id}`);
+        let currentLikes = parseInt(likesElement.innerText);
+        likesElement.innerText = currentLikes + 1;
+    }
+
+    function decrementLikes(id) {
+        const likesElement = document.getElementById(`likes-${id}`);
+        let currentLikes = parseInt(likesElement.innerText);
+        if (currentLikes > 0) {
+            likesElement.innerText = currentLikes - 1;
+        }
+    }
+</script>
+</body>
+</html>

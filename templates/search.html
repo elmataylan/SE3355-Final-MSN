@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta.charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h1>Search Results</h1>
+    {% if results %}
+        <ul class="list-group">
+            {% for news in results %}
+                <li class="list-group-item">
+                    <h2>{{ news.header }}</h2>
+                    <p>{{ news.text }}</p>
+                    <p><strong>Category:</strong> {{ news.category }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No results found.</p>
+    {% endif %}
+</div>
+</body>
+</html>

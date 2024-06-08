@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-light bg-light">
+    <a class="navbar-brand" href="{% url 'index' %}">Anasayfa</a>
+</nav>
+<div class="container mt-4">
+    <h1>Search Results for "{{ query }}"</h1>
+    <div class="list-group">
+        {% if search_results %}
+            {% for news_item in search_results %}
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img src="{{ news_item.photoURL }}" class="img-fluid" alt="News Image">
+                        </div>
+                        <div class="col-md-8">
+                            <h5 class="mb-1">{{ news_item.header }}</h5>
+                            <p class="mb-1">{{ news_item.text }}</p>
+                            <small>Kategori: {{ news_item.category }}</small><br>
+                            <small>Likes: <span id="likes-{{ news_item.id }}">{{ news_item.likes }}</span></small>
+                            <button class="btn btn-success btn-sm ml-2" onclick="incrementLikes({{ news_item.id }})">+</button>
+                            <button class="btn btn-danger btn-sm ml-2" onclick="decrementLikes({{ news_item.id }})">-</button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No results found.</p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function incrementLikes(id) {
+        const likesElement = document.getElementById(`likes-${id}`);
+        let currentLikes = parseInt(likesElement.innerText);
+        likesElement.innerText = currentLikes + 1;
+    }
+
+    function decrementLikes(id) {
+        const likesElement = document.getElementById(`likes-${id}`);
+        let currentLikes = parseInt(likesElement.innerText);
+        if (currentLikes > 0) {
+            likesElement.innerText = currentLikes - 1;
+        }
+    }
+</script>
+</body>
+</html>

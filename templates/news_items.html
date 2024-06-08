@@ -1,0 +1,17 @@
+{% for news_item in news %}
+    <div class="list-group-item">
+        <div class="row">
+            <div class="col-md-4">
+                <img src="{{ news_item.photoURL }}" class="img-fluid" alt="News Image">
+            </div>
+            <div class="col-md-8">
+                <h5 class="mb-1">{{ news_item.header }}</h5>
+                <p class="mb-1">{{ news_item.text }}</p>
+                <small>Kategori: {{ news_item.category }}</small><br>
+                <small>Likes: <span id="likes-{{ news_item.id }}">{{ news_item.likes }}</span></small>
+                <button class="btn btn-success btn-sm ml-2" onclick="incrementLikes({{ news_item.id }})">+</button>
+                <button class="btn btn-danger btn-sm ml-2" onclick="decrementLikes({{ news_item.id }})">-</button>
+            </div>
+        </div>
+    </div>
+{% endfor %}
